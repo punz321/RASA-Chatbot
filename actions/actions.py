@@ -34,7 +34,7 @@ class ActionQueryOrders(Action):
             return []
 
         try:
-            # Replace with your MySQL database connection details
+            
             connection = mysql.connector.connect(
                 host=os.getenv('HOST'),
                 database=os.getenv('NAME'),
