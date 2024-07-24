@@ -100,4 +100,11 @@ nlu:
     - Number of orders for [2024](date)
     - Number of orders after [2015](date)?
 
-
+- intent: list_countries_by_profit
+  examples: |
+    - List all countries by profit
+    - Which countries have the highest profit?
+    - Show me the countries sorted by profit
+    - which are the top countries by profit?
+    - top countries who have the most profit?
+    - Give me a list of countries by profit in descending order

@@ -72,3 +72,43 @@ class ActionQueryOrders(Action):
             dispatcher.utter_message(text=f"Error connecting to MySQL database: {e}")
 
         return []
+
+class ActionListCountriesByProfit(Action):
+
+    def name(self) -> Text:
+        return "action_list_countries_by_profit"
+
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+
+        try:
+            connection = mysql.connector.connect(
+                host=os.getenv('HOST'),
+                database=os.getenv('NAME'),
+                user=os.getenv('USER'),
+                password=os.getenv('PASSWORD')
+            )
+
+            if connection.is_connected():
+                cursor = connection.cursor()
+                query = """
+                SELECT DISTINCT Country FROM mytable ORDER BY TotalProfit DESC
+                """
+                cursor.execute(query)
+                results = cursor.fetchall()
+                
+                if results:
+                    countries = [row[0] for row in results]
+                    countries_by_profit = ', '.join(countries)
+                    dispatcher.utter_message(text=f"Here are the countries sorted by profit:\n{countries_by_profit}")
+                else:
+                    dispatcher.utter_message(text="No countries found.")
+
+                cursor.close()
+                connection.close()
+
+        except Error as e:
+            dispatcher.utter_message(text=f"Error connecting to MySQL database: {e}")
+
+        return []

@@ -42,4 +42,10 @@ stories:
     entities:
       - date: "2015"
   - action: action_query_orders
-  - action: utter_iamabot
+
+
+- story: list countries by profit
+  steps:
+  - intent: list_countries_by_profit
+  - action: action_list_countries_by_profit
+

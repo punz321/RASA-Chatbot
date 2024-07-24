@@ -9,6 +9,7 @@ intents:
   - mood_unhappy
   - bot_challenge
   - query_orders
+  - list_countries_by_profit
 
 
 responses:
@@ -31,11 +32,15 @@ responses:
   utter_iamabot:
   - text: "I am a bot, powered by Rasa."
 
+  utter_list_countries_by_profit:
+  - text: "Here are the countries sorted by profit:{countries_by_profit}" 
+
 entities:
   - date
 
 actions:
   - action_query_orders
+  - action_list_countries_by_profit
 
 
 session_config:

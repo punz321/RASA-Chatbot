@@ -17,3 +17,8 @@ rules:
   - intent: query_orders
   - action: action_query_orders
 
+- rule: Handle profit queries
+  steps:
+  - intent: list_countries_by_profit
+  - action: action_list_countries_by_profit
+
