@@ -3,6 +3,8 @@ from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 import mysql.connector
 from mysql.connector import Error
+from dateutil.parser import parse
+from datetime import datetime
 import os
 from dotenv import load_dotenv
 
@@ -28,13 +30,43 @@ class ActionQueryOrders(Action):
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
-        date = next(tracker.get_latest_entity_values("date"), None)
-        if not date:
+        date_entities = tracker.latest_message['entities']
+        date_texts = [entity['value'] for entity in date_entities if entity['entity'] == 'date']
+        
+        if not date_texts:
             dispatcher.utter_message(text="I did not understand the date. Please try again.")
             return []
 
+        # Combine date parts if needed
+        date_text = ' '.join(date_texts)
+
+        # Define month mapping
+        month_mapping = {
+            'january': 1, 'february': 2, 'march': 3, 'april': 4,
+            'may': 5, 'june': 6, 'july': 7, 'august': 8,
+            'september': 9, 'october': 10, 'november': 11, 'december': 12
+        }
+
+        # Normalize date
         try:
-            
+            parsed_date = parse(date_text, fuzzy=True)
+            query_type = None
+            year = parsed_date.year
+            month = None
+            if len(date_texts) > 1 and date_texts[0].lower() in month_mapping:
+                month = month_mapping[date_texts[0].lower()]
+                query_type = "month"
+            elif len(date_texts) == 1 and len(date_texts[0]) == 4 and date_texts[0].isdigit():
+                query_type = "year"
+            elif len(date_texts) == 1 and "-" in date_texts[0]:
+                query_type = "full_date"
+            else:
+                query_type = "full_date"
+        except ValueError:
+            dispatcher.utter_message(text="The date format is not correct. Please try again.")
+            return []
+
+        try:
             connection = mysql.connector.connect(
                 host=os.getenv('HOST'),
                 database=os.getenv('NAME'),
@@ -45,25 +77,24 @@ class ActionQueryOrders(Action):
             if connection.is_connected():
                 cursor = connection.cursor()
 
-                if len(date) == 4 and date.isdigit():  # Year
+                if query_type == "year":
                     query = "SELECT COUNT(*) FROM mytable WHERE YEAR(OrderDate) = %s"
-                    params = (date,)
-                elif len(date) == 7 and date[4] == '-' and date[:4].isdigit() and date[5:].isdigit():  # Year-Month
-                    year, month = date.split('-')
+                    params = (year,)
+                elif query_type == "month":
                     query = "SELECT COUNT(*) FROM mytable WHERE YEAR(OrderDate) = %s AND MONTH(OrderDate) = %s"
                     params = (year, month)
-                else:  # Full date
+                else:
                     query = "SELECT COUNT(*) FROM mytable WHERE OrderDate = %s"
-                    params = (date,)
+                    params = (parsed_date.date(),)
 
                 cursor.execute(query, params)
                 result = cursor.fetchone()
 
                 if result:
                     count = result[0]
-                    dispatcher.utter_message(text=f"There were {count} orders on {date}.")
+                    dispatcher.utter_message(text=f"There were {count} orders in {date_texts}.")
                 else:
-                    dispatcher.utter_message(text=f"No orders found for {date}.")
+                    dispatcher.utter_message(text=f"No orders found for {date_text}.")
 
                 cursor.close()
                 connection.close()
@@ -72,7 +103,6 @@ class ActionQueryOrders(Action):
             dispatcher.utter_message(text=f"Error connecting to MySQL database: {e}")
 
         return []
-
 class ActionListCountriesByProfit(Action):
 
     def name(self) -> Text:
@@ -172,6 +202,8 @@ class ActionAskMostPopularItem(Action):
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
+        country = next(tracker.get_latest_entity_values("country"), None)
+
         try:
             connection = mysql.connector.connect(
                 host=os.getenv('HOST'),
@@ -182,13 +214,33 @@ class ActionAskMostPopularItem(Action):
 
             if connection.is_connected():
                 cursor = connection.cursor()
-                query = "SELECT ItemType FROM mytable GROUP BY ItemType ORDER BY SUM(UnitsSold) DESC LIMIT 1"
-                cursor.execute(query)
+
+                if country:
+                    query = """
+                    SELECT ItemType FROM mytable
+                    WHERE Country = %s
+                    GROUP BY ItemType
+                    ORDER BY SUM(UnitsSold) DESC
+                    LIMIT 1
+                    """
+                    cursor.execute(query, (country,))
+                else:
+                    query = """
+                    SELECT ItemType FROM mytable
+                    GROUP BY ItemType
+                    ORDER BY SUM(UnitsSold) DESC
+                    LIMIT 1
+                    """
+                    cursor.execute(query)
+
                 result = cursor.fetchone()
 
                 if result:
                     item_type = result[0]
-                    dispatcher.utter_message(text=f"The most popular item type is {item_type}")
+                    if country:
+                        dispatcher.utter_message(text=f"The most popular item type in {country} is {item_type}.")
+                    else:
+                        dispatcher.utter_message(text=f"The most popular item type overall is {item_type}.")
                 else:
                     dispatcher.utter_message(text="No item type data found.")
 

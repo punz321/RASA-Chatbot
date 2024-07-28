@@ -59,6 +59,8 @@ stories:
 - story: Ask most popular item
   steps:
     - intent: ask_most_popular_item
+      entities:
+        - country: "Bahrain"
     - action: action_ask_most_popular_item
 
 - story: Ask total units sold region

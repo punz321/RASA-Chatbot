@@ -99,6 +99,8 @@ nlu:
     - How many orders in [March](date)?
     - Number of orders for [2024](date)
     - Number of orders after [2015](date)?
+    - How many orders were placed in [01-2023](date)
+    - How many orders were placed on [2023-01-01](date)
 
 - intent: list_countries_by_profit
   examples: |
