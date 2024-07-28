@@ -8,7 +8,7 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 
-load_dotenv()  # Load environment variables
+load_dotenv() 
 
 class ActionHelloWorld(Action):
 
@@ -37,17 +37,14 @@ class ActionQueryOrders(Action):
             dispatcher.utter_message(text="I did not understand the date. Please try again.")
             return []
 
-        # Combine date parts if needed
         date_text = ' '.join(date_texts)
 
-        # Define month mapping
         month_mapping = {
             'january': 1, 'february': 2, 'march': 3, 'april': 4,
             'may': 5, 'june': 6, 'july': 7, 'august': 8,
             'september': 9, 'october': 10, 'november': 11, 'december': 12
         }
 
-        # Normalize date
         try:
             parsed_date = parse(date_text, fuzzy=True)
             query_type = None
@@ -151,14 +148,10 @@ class ActionAskTotalRevenueCountry(Action):
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
-        # Debug: Print all events to understand what is being received
         for event in tracker.events:
             print(event)
 
         country = next(tracker.get_latest_entity_values("country"), None)
-
-        # Debug: Print the extracted country
-        print(f"Extracted country: {country}")
 
         if not country:
             dispatcher.utter_message(text="I did not understand the country. Please try again.")
