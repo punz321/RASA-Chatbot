@@ -49,3 +49,32 @@ stories:
   - intent: list_countries_by_profit
   - action: action_list_countries_by_profit
 
+- story: Ask total revenue country
+  steps:
+    - intent: ask_total_revenue_country
+      entities:
+        - country: "Monaco"
+    - action: action_ask_total_revenue_country
+
+- story: Ask most popular item
+  steps:
+    - intent: ask_most_popular_item
+    - action: action_ask_most_popular_item
+
+- story: Ask total units sold region
+  steps:
+    - intent: ask_total_units_sold_region
+      entities:
+        - region: "Europe"
+    - action: action_ask_total_units_sold_region
+
+- story: Ask highest profit order
+  steps:
+    - intent: ask_highest_profit_order
+    - action: action_ask_highest_profit_order
+
+- story: Ask lowest cost order
+  steps:
+    - intent: ask_lowest_cost_order
+    - action: action_ask_lowest_cost_order
+

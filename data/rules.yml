@@ -22,3 +22,27 @@ rules:
   - intent: list_countries_by_profit
   - action: action_list_countries_by_profit
 
+- rule: Respond to ask total revenue country
+  steps:
+    - intent: ask_total_revenue_country
+    - action: action_ask_total_revenue_country
+
+- rule: Respond to ask most popular item
+  steps:
+    - intent: ask_most_popular_item
+    - action: action_ask_most_popular_item
+
+- rule: Respond to ask total units sold region
+  steps:
+    - intent: ask_total_units_sold_region
+    - action: action_ask_total_units_sold_region
+
+- rule: Respond to ask highest profit order
+  steps:
+    - intent: ask_highest_profit_order
+    - action: action_ask_highest_profit_order
+
+- rule: Respond to ask lowest cost order
+  steps:
+    - intent: ask_lowest_cost_order
+    - action: action_ask_lowest_cost_order

@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import requests
 
-RASA_API_URL = "http://localhost:5055/webhook" 
+RASA_API_URL = "http://localhost:5005/webhooks/rest/webhook" 
 app = Flask(__name__)
 
 @app.route('/')

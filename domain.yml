@@ -10,6 +10,11 @@ intents:
   - bot_challenge
   - query_orders
   - list_countries_by_profit
+  - ask_total_revenue_country
+  - ask_most_popular_item
+  - ask_total_units_sold_region
+  - ask_highest_profit_order
+  - ask_lowest_cost_order
 
 
 responses:
@@ -35,12 +40,45 @@ responses:
   utter_list_countries_by_profit:
   - text: "Here are the countries sorted by profit:{countries_by_profit}" 
 
+  utter_ask_total_revenue_country:
+    - text: "The total revenue for {country} is {revenue}"
+
+  utter_ask_most_popular_item:
+    - text: "The most popular item type is {item_type}"
+
+  utter_ask_total_units_sold_region:
+    - text: "The total number of units sold in {region} is {units_sold}"
+
+  utter_ask_highest_profit_order:
+    - text: "The order with the highest profit is {order_details}"
+
+  utter_ask_lowest_cost_order:
+    - text: "The order with the lowest cost is {order_details}"
+
 entities:
-  - date
+  - country
+  - item_type
+  - region
+  - order_priority
+  - sales_channel
+  - order_date
+  - order_id
+  - ship_date
+  - units_sold
+  - unit_price
+  - unit_cost
+  - total_revenue
+  - total_cost
+  - total_profit
 
 actions:
   - action_query_orders
   - action_list_countries_by_profit
+  - action_ask_total_revenue_country
+  - action_ask_most_popular_item
+  - action_ask_total_units_sold_region
+  - action_ask_highest_profit_order
+  - action_ask_lowest_cost_order
 
 
 session_config:
