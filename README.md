@@ -2,10 +2,10 @@
 A RASA chatbot that's trained on an SQL data and answers user's queries in conversational format 
 
 Follow the below steps for the proper working of the chatbot:
-- pip install rasa
-
-- run rasa
-
+```
+pip install rasa
+run rasa
+```
 👆this is to run the rasa server on the local host
 Note: If you have multiple terminals open for the same directory, you might face errors in running the server 
 ```
